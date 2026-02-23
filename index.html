@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigación UPNECH - Evaluación Académica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .rounded-3xl { border-radius: 1.5rem; }
+        .font-black { font-weight: 900; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .radio-btn:checked + .radio-label { background-color: #4f46e5; color: white; border-color: #4f46e5; }
+        .radio-btn-blue:checked + .radio-label { background-color: #2563eb; color: white; border-color: #2563eb; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-900">
+
+    <nav class="bg-white shadow-sm p-4 sticky top-0 z-50 flex justify-between items-center border-b border-gray-100">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center text-white font-black text-xs">U</div>
+            <span class="text-xs font-black text-indigo-900 uppercase">UPNECH Campus Parral</span>
+        </div>
+        <button onclick="showAdmin()" class="text-[10px] font-bold text-gray-300 hover:text-indigo-500 uppercase">Panel de Control</button>
+    </nav>
+
+    <div id="view-landing" class="page active max-w-2xl mx-auto mt-10 p-6">
+        <div class="bg-white p-10 rounded-3xl shadow-xl border-t-8 border-indigo-700">
+            <h1 class="text-3xl font-black text-gray-900 mb-4 text-center text-indigo-900">Protocolo de Investigación Académica</h1>
+            <div class="text-gray-600 space-y-4 mb-8 leading-relaxed text-justify">
+                <p>Estimado(a) docente: La presente evaluación tiene como objetivo recolectar datos fundamentales para la investigación titulada <strong>"Fenómeno del Impostor y Perfeccionismo en el ámbito educativo"</strong>.</p>
+                <p>Su participación es voluntaria y sus respuestas serán tratadas con estricta confidencialidad. Los resultados obtenidos permitirán <strong>abonar al conocimiento científico</strong> sobre la salud mental y el desempeño profesional docente en nuestra región.</p>
+                <p class="font-bold">Por favor, complete sus datos para iniciar:</p>
+            </div>
+            
+            <div class="space-y-4">
+                <input id="form-name" class="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nombre completo o Seudónimo">
+                <div class="grid grid-cols-2 gap-4">
+                    <input id="form-age" type="number" class="w-full p-4 border border-gray-200 rounded-2xl outline-none" placeholder="Edad">
+                    <select id="form-gender" class="w-full p-4 border border-gray-200 rounded-2xl bg-white">
+                        <option value="">Género</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Masculino">Masculino</option>
+                    </select>
+                </div>
+                <select id="form-level" onchange="document.getElementById('form-other').classList.toggle('hidden', this.value !== 'Otros')" class="w-full p-4 border border-gray-200 rounded-2xl bg-white">
+                    <option value="">Nivel Educativo de adscripción</option>
+                    <option value="Preescolar">Preescolar</option>
+                    <option value="Primaria">Primaria</option>
+                    <option value="Secundaria">Secundaria</option>
+                    <option value="Media Superior">Media Superior</option>
+                    <option value="Superior">Superior</option>
+                    <option value="Otros">Otros (Especifique)</option>
+                </select>
+                <input id="form-other" class="hidden w-full p-4 border-2 border-indigo-50 bg-indigo-50 rounded-2xl" placeholder="Especifique área">
+            </div>
+            <button onclick="navigate('view-clance')" class="w-full mt-10 bg-indigo-700 text-white py-5 rounded-2xl font-black text-lg shadow-lg hover:bg-indigo-800 transition-colors uppercase tracking-widest">Iniciar Protocolo</button>
+        </div>
+    </div>
+
+    <div id="view-clance" class="page max-w-3xl mx-auto p-4 mt-6 pb-20">
+        <div class="mb-8 bg-white p-8 rounded-2xl border-l-8 border-indigo-600 shadow-sm">
+            <h2 class="text-2xl font-black text-gray-900 mb-2">Sección I: Escala de Clance (Fenómeno del Impostor)</h2>
+            <p class="text-sm text-gray-500 mb-4 italic">Seleccione la opción que mejor describa su experiencia personal actual.</p>
+            <div class="grid grid-cols-5 gap-1 text-[10px] font-black text-center text-gray-400 uppercase">
+                <div>Nada Cierto</div><div>Raramente</div><div>A veces</div><div>A menudo</div><div>Muy Cierto</div>
+            </div>
+        </div>
+        <div id="clance-items" class="space-y-4"></div>
+        <button onclick="navigate('view-apsr')" class="w-full mt-10 bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg shadow-lg uppercase tracking-wider">Continuar a Sección II</button>
+    </div>
+
+    <div id="view-apsr" class="page max-w-3xl mx-auto p-4 mt-6 pb-20">
+        <div class="mb-8 bg-white p-8 rounded-2xl border-l-8 border-blue-600 shadow-sm">
+            <h2 class="text-2xl font-black text-gray-900 mb-2">Sección II: Escala de Perfeccionismo (APS-R)</h2>
+            <p class="text-sm text-gray-500 mb-6 italic">Evalúe su nivel de acuerdo o desacuerdo con los siguientes enunciados.</p>
+            <div class="text-[11px] font-bold text-blue-800 bg-blue-50 p-4 rounded-xl leading-relaxed">
+                ESCALA: 1 = Totalmente en desacuerdo | 2 = En desacuerdo | 3 = Algo en desacuerdo | 4 = Ni de acuerdo ni en desacuerdo | 5 = Algo de acuerdo | 6 = De acuerdo | 7 = Totalmente de acuerdo
+            </div>
+        </div>
+        <div id="apsr-items" class="space-y-4"></div>
+        <button onclick="finalizar()" class="w-full mt-10 bg-green-700 text-white py-5 rounded-2xl font-black text-lg shadow-lg uppercase tracking-wider">Enviar Protocolo</button>
+    </div>
+
+    <div id="view-thanks" class="page flex-col items-center justify-center min-h-[70vh] text-center px-4">
+        <div class="bg-white p-12 rounded-3xl shadow-2xl max-w-2xl mx-auto border-t-8 border-green-600">
+            <div class="text-6xl mb-6">🎓</div>
+            <h1 class="text-3xl font-black text-gray-900 mb-6">Agradecimiento Institucional</h1>
+            <div class="text-gray-600 space-y-4 leading-relaxed text-lg">
+                <p>Su participación ha sido registrada satisfactoriamente.</p>
+                <p>Agradecemos sinceramente su tiempo y disposición para colaborar en este estudio. Su aporte es valioso para <strong>abonar al conocimiento</strong> y fortalecer la práctica educativa de la región.</p>
+                <p class="font-bold text-indigo-900">UPNECH - Parral, Chihuahua.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-admin" class="page p-8 bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-black text-indigo-900">REGISTRO TÉCNICO DE RESULTADOS</h1>
+                <div class="flex gap-2">
+                    <button onclick="exportarExcel()" class="bg-green-700 text-white px-6 py-3 rounded-xl font-bold text-sm">DESCARGAR EXCEL</button>
+                    <button onclick="location.reload()" class="bg-gray-200 px-6 py-3 rounded-xl font-bold text-sm">CERRAR SESIÓN</button>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <table class="w-full text-left" id="tabla-res">
+                    <thead class="bg-indigo-900 text-white text-[10px] uppercase">
+                        <tr>
+                            <th class="p-4">Docente</th>
+                            <th class="p-4">Nivel Impostor (Pts)</th>
+                            <th class="p-4">APS-R (HS | DIS)</th>
+                            <th class="p-4">Interpretación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-body" class="divide-y text-xs"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEV5oUtxOaeWuEsCc327D_Sy6Ml-cbftY",
+            authDomain: "tesis-upnech.firebaseapp.com",
+            databaseURL: "https://tesis-upnech-default-rtdb.firebaseio.com",
+            projectId: "tesis-upnech",
+            storageBucket: "tesis-upnech.firebasestorage.app",
+            messagingSenderId: "358602494687",
+            appId: "1:358602494687:web:ca881a15d0b757ab720f6a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const CLANCE_QS = [
+            "He tenido éxito en una tarea aunque temía no hacerlo bien.", "Doy la impresión de ser más competente de lo que soy.", "Evito evaluaciones y me aterra que otros me evalúen.", "Temo no cumplir expectativas futuras tras un éxito.", "Creo que mi éxito es por suerte o estar en el lugar justo.", "Me desanimo si no soy el mejor o alguien especial.", "Recuerdo más mis fallos que mis aciertos.", "Rara vez hago una tarea tan bien como me gustaría.", "Siento que mi éxito es resultado de algún error.", "Me cuesta aceptar cumplidos sobre mi capacidad.", "Siento que mi éxito se debe a la suerte.", "Me decepcionan mis logros; debería haber logrado más.", "Temo que descubran cuánta capacidad me falta realmente.", "Temo fallar en tareas nuevas aunque suela irme bien.", "Dudo de poder repetir un éxito obtenido.", "Si me elogian, tiendo a restar importancia a lo hecho.", "Creo que los demás a mi alrededor son más inteligentes.", "Me preocupa fallar aunque otros confíen en mí.", "No cuento mis éxitos hasta que son un hecho absoluto.", "Me siento mal si no soy 'el mejor' en los logros."
+        ];
+
+        // 23 REACTIVOS APS-R (HS = Estándares, D = Discrepancia, O = Orden)
+        const APSR_QS = [
+            { t: "Tengo altos estándares para mi desempeño.", type: "HS" },
+            { t: "Soy una persona organizada.", type: "O" },
+            { t: "Me siento frustrado cuando no alcanzo mis metas.", type: "D" },
+            { t: "La pulcritud es muy importante para mí.", type: "O" },
+            { t: "Pienso que las cosas deben estar en su sitio.", type: "O" },
+            { t: "Me esfuerzo por ser el mejor en lo que hago.", type: "HS" },
+            { t: "Casi nunca siento que mi trabajo es lo suficientemente bueno.", type: "D" },
+            { t: "Me gusta mantener mis cosas en orden.", type: "O" },
+            { t: "Si me propongo hacer algo, debe ser excelente.", type: "HS" },
+            { t: "Me siento insatisfecho a menos que mi trabajo sea perfecto.", type: "D" },
+            { t: "Siento que me quedo corto respecto a mis capacidades.", type: "D" },
+            { t: "Tengo expectativas muy altas sobre mí mismo.", type: "HS" },
+            { t: "Suelo sentir que no cumplo mis propias expectativas.", type: "D" },
+            { t: "Me gusta que mi entorno esté bien organizado.", type: "O" },
+            { t: "Siento mucha presión personal por no fallar.", type: "HS" },
+            { t: "A menudo me arrepiento de no haber hecho más en mis tareas.", type: "D" },
+            { t: "Soy muy exigente con la calidad de mi trabajo.", type: "HS" },
+            { t: "Me cuesta conformarme con resultados aceptables.", type: "D" },
+            { t: "Pienso que el orden ayuda a trabajar mejor.", type: "O" },
+            { t: "Me molesta no alcanzar la perfección en lo que emprendo.", type: "D" },
+            { t: "Busco la excelencia en cada detalle.", type: "HS" },
+            { t: "Siento que mis logros nunca son suficientes.", type: "D" },
+            { t: "Considero que la organización es la clave del éxito.", type: "O" }
+        ];
+
+        window.navigate = (id) => {
+            if(id === 'view-clance' && !document.getElementById('form-name').value) return alert("Por favor, ingrese su nombre para continuar.");
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0,0);
+        };
+
+        const renderItems = (lista, contId, prefijo, max, cls) => {
+            const cont = document.getElementById(contId);
+            lista.forEach((q, i) => {
+                cont.innerHTML += `
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <p class="font-bold text-gray-800 mb-6 text-sm uppercase">${i+1}. ${q.t || q}</p>
+                    <div class="grid grid-cols-${max} gap-1">
+                        ${Array.from({length: max}, (_, v) => v + 1).map(v => `
+                            <label class="cursor-pointer">
+                                <input type="radio" name="${prefijo}${i}" value="${v}" class="hidden radio-btn ${cls}">
+                                <div class="radio-label py-4 rounded-xl border-2 font-black text-center transition-all bg-gray-50 text-gray-400 border-gray-50 text-xs">${v}</div>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+        };
+
+        renderItems(CLANCE_QS, 'clance-items', 'c', 5, 'radio-btn-indigo');
+        renderItems(APSR_QS, 'apsr-items', 'a', 7, 'radio-btn-blue');
+
+        window.finalizar = () => {
+            let tc = 0, hs = 0, dis = 0;
+            CLANCE_QS.forEach((_, i) => tc += parseInt(document.querySelector(`input[name="c${i}"]:checked`)?.value || 0));
+            APSR_QS.forEach((q, i) => {
+                let v = parseInt(document.querySelector(`input[name="a${i}"]:checked`)?.value || 0);
+                if(q.type === 'HS') hs += v; else if(q.type === 'D') dis += v;
+            });
+
+            const data = {
+                n: document.getElementById('form-name').value,
+                l: document.getElementById('form-level').value,
+                tc, hs, dis,
+                fecha: new Date().toLocaleString()
+            };
+
+            push(ref(db, 'tesis_data'), data).then(() => navigate('view-thanks'));
+        };
+
+        window.showAdmin = () => {
+            if(prompt("Contraseña Admin:") !== "tesis2026") return;
+            navigate('view-admin');
+            onValue(ref(db, 'tesis_data'), snap => {
+                const body = document.getElementById('admin-body');
+                body.innerHTML = "";
+                snap.forEach(i => {
+                    const d = i.val();
+                    let cat = d.tc <= 40 ? "Bajo" : d.tc <= 60 ? "Moderado" : d.tc <= 80 ? "Frecuente" : "Intenso";
+                    body.innerHTML += `
+                    <tr>
+                        <td class="p-4 font-bold uppercase">${d.n}<br><span class="text-[9px] text-gray-400">${d.l}</span></td>
+                        <td class="p-4"><span class="text-lg font-black text-indigo-700">${d.tc}</span> <br><span class="text-[9px] uppercase font-bold text-gray-400">${cat}</span></td>
+                        <td class="p-4">HS: ${d.hs} | DIS: ${d.dis}</td>
+                        <td class="p-4"><span class="px-3 py-1 rounded-lg font-black ${d.dis > 35 ? 'bg-blue-700 text-white' : 'bg-gray-100'} text-[10px]">${d.dis > 35 ? 'DESADAPTATIVO' : 'ADAPTATIVO'}</span></td>
+                    </tr>`;
+                });
+            });
+        };
+
+        window.exportarExcel = () => XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById('tabla-res')), "Investigacion_UPNECH.xlsx");
+    </script>
+</body>
+</html>
